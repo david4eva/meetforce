@@ -49,13 +49,13 @@ It enables organizations to:
 
 ## 🏗️ Solution Architecture
 
-```mermaid
-graph TD;
-    A[Salesforce Experience Cloud Form] -->|Submit Registration| B[Google Cloud Middleware (Python)]
-    B -->|Create Meet + Register Attendees| C[Google Meet API]
-    B -->|Store Data| D[Relational DB]
-    C -->|Send Event Details| E[Salesforce Meeting/Attendee Objects]
-    F[Google Cloud Scheduler] -->|Trigger Sync| G[Google Middleware]
-    G -->|Get Attendance| C
-    G -->|Update Attendance| E
-    G -->|Failed Sync| H[Pub/Sub Dead Letter Topic]
+flowchart LR
+    A[User Submits Registration Form (Salesforce Experience Cloud)] --> B[Google Cloud Middleware (Python)]
+    B --> C[Google Meet API: Create Registrant/Meeting]
+    C --> D[(Relational Database: Store Registrant/Meeting Info)]
+    B --> E[Salesforce: Update Registrant/Meeting Records]
+    D --> F[Scheduler: Trigger Attendance Sync (Cloud Scheduler or Pub/Sub)]
+    F --> G[Google Meet API: Fetch Attendance]
+    G --> H[(Relational Database: Store Attendance)]
+    H --> I[Salesforce: Update Attendance on Meeting/Registrant Records]
+    F -.-> J[Dead Letter Topic: Failed Syncs for Manual Review]
